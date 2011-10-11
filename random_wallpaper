@@ -1,0 +1,28 @@
+#!/usr/bin/perl -w
+use strict;
+use warnings;
+
+# Set to the directory you want to have searched for photos
+my $searchPath = '/home/matt/workspace/pics/wallpaper';
+# Edit to the number of seconds between photo switches
+my $switchTime = 600;
+
+my @photos = `find $searchPath -type f | grep [jJ][pP][eE]*[gG]`;
+chomp(@photos);
+my $photo;
+
+while(1)
+{
+    $photo = $photos[rand($#photos)];
+    # Gnome
+    # `gconftool-2 --type string --set /desktop/gnome/background/picture_filename "$photo"`;
+
+    # general
+    # `xli -onroot -fullscreen "$photo"`;
+
+    # Xfce
+    `echo "# xfce backdrop list\n$photo" > ~/.config/xfce4/desktop/backdrop.list && xfdesktop --reload`;
+
+    sleep($switchTime);
+}
+
