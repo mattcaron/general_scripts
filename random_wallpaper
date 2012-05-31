@@ -11,18 +11,43 @@ my @photos = `find $searchPath -type f | grep [jJ][pP][eE]*[gG]`;
 chomp(@photos);
 my $photo;
 
-while(1)
-{
-    $photo = $photos[rand($#photos)];
-    # Gnome
-    # `gconftool-2 --type string --set /desktop/gnome/background/picture_filename "$photo"`;
+my $running = `ps -ef | grep random_wallpaper | grep perl | grep -v grep | wc -l`;
 
-    # general
-    # `xli -onroot -fullscreen "$photo"`;
+chomp($running);
 
-    # Xfce
-    `echo "# xfce backdrop list\n$photo" > ~/.config/xfce4/desktop/backdrop.list && xfdesktop --reload`;
+# print "Running = $running\n";
 
-    sleep($switchTime);
+# Race condition - wait for the desktop manager/window
+# manager/whatever to start and be happy.
+sleep(5); 
+
+# We will always get ourselves in the above count
+if ($running eq "1") {
+    while(1)
+    {
+        $photo = $photos[rand($#photos)];
+        # Mate
+        #`mateconftool-2 --type string --set /desktop/mate/background/picture_filename "$photo"`;
+
+        # Gnome
+        # `gconftool-2 --type string --set /desktop/gnome/background/picture_filename "$photo"`;
+        
+        # general
+        # `xli -onroot -fullscreen "$photo"`;
+        
+        # old Xfce
+        #`echo "# xfce backdrop list\n$photo" > ~/.config/xfce4/desktop/backdrop.list && xfdesktop --reload`;
+    
+        # newer Xfce
+        `echo "# xfce backdrop list\n$photo" > ~/.config/xfce4/desktop/backdrop.list && killall -HUP xfdesktop`;
+        
+        # lxde
+        # `pcmanfm -w ${photo}`;
+        
+        sleep($switchTime);
+    }
+}
+else {
+    print "Already running, exiting\n"
 }
 
