@@ -39,7 +39,7 @@ if ($running eq "1") {
         #`echo "# xfce backdrop list\n$photo" > ~/.config/xfce4/desktop/backdrop.list && xfdesktop --reload`;
     
         # newer Xfce
-        `echo "# xfce backdrop list\n$photo" > ~/.config/xfce4/desktop/backdrop.list && killall -HUP xfdesktop`;
+        `echo "# xfce backdrop list\n$photo" > ~/.config/xfce4/desktop/backdrop.list && xfdesktop --reload`;
         
         # lxde
         # `pcmanfm -w ${photo}`;
