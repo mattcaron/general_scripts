@@ -5,10 +5,6 @@ use warnings;
 # Edit to the number of seconds between photo switches
 my $switchTime = 600;
 
-my @photos = `find $searchPath -type f | grep [jJ][pP][eE]*[gG]`;
-chomp(@photos);
-my $photo;
-
 my $running = `ps -ef | grep xfdesktop_hup | grep perl | grep -v grep | wc -l`;
 
 chomp($running);
