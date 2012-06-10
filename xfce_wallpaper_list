@@ -1,0 +1,4 @@
+#!/bin/bash
+
+echo "# xfce backdrop list"
+find /home/matt/workspace/pics/wallpaper/ -type f
