@@ -1,0 +1,11 @@
+#!/bin/sh
+
+if [ `whoami` != "root" ]; then
+   echo "Run this as root"
+else
+	echo "Switching to userspace governor, min speed"
+	echo userspace > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+	echo userspace > /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor
+	cat /sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_min_freq > /sys/devices/system/cpu/cpu0/cpufreq/scaling_setspeed
+	cat /sys/devices/system/cpu/cpu1/cpufreq/cpuinfo_min_freq > /sys/devices/system/cpu/cpu1/cpufreq/scaling_setspeed
+fi
