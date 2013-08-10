@@ -1,0 +1,2 @@
+#!/bin/sh
+wakeonlan 00:24:8C:BE:75:C5
