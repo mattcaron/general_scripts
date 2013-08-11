@@ -1,0 +1,29 @@
+#!/bin/bash
+
+# 5001 is for iperf
+SERVICES="ssh ipp netbios-ns netbios-dgm netbios-ssn microsoft-ds 5001"
+
+if [ $# -ne 1 ]; then
+    echo "This needs an argument: either up or down"
+else 
+    echo -n "Enter password: "
+    read -s pw
+    echo ""
+
+    echo $pw | sudo -S ufw --force reset > /dev/null
+    echo $pw | sudo -S ufw enable > /dev/null
+
+    if [ $1 == "up" ]; then
+        # no op
+        true
+    elif [ $1 == "down" ]; then
+        # Poke holes for useful services
+        for service in $SERVICES; do
+            echo $pw | sudo -S ufw allow $service > /dev/null
+        done
+    else
+        echo "Unknown command: $1"
+    fi
+
+    echo $pw | sudo -S ufw status
+fi
