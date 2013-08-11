@@ -1,0 +1,28 @@
+#!/bin/bash
+
+SERVER=amahi
+DOMAIN=HOME
+MOUNTS=`cat ~/.amahi-mounts`
+
+echo -n "Enter password: "
+read -s pw
+echo ""
+CREDENTIALS=`mktemp $HOME/winmount-XXXXXX`
+chmod 600 $CREDENTIALS
+echo "username=$USER" >> $CREDENTIALS
+echo "password=$pw" >> $CREDENTIALS
+echo "domain=$DOMAIN" >> $CREDENTIALS
+
+# Homedir
+echo $pw | sudo -S mount -t cifs -o \
+    credentials=$CREDENTIALS,uid=$USER,gid=$USER //$SERVER/$USER \
+    $HOME/amahi
+
+# Subdirs of homedir
+for mount in $MOUNTS; do
+    echo $pw | sudo -S mount -t cifs -o \
+        credentials=$CREDENTIALS,uid=$USER,gid=$USER //$SERVER/$USER/$mount \
+        $HOME/$mount
+done
+
+rm $CREDENTIALS

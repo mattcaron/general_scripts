@@ -1,0 +1,14 @@
+#!/bin/bash
+
+MOUNTS=`cat ~/.amahi-mounts`
+
+echo -n "Enter password: "
+read -s pw
+echo ""
+
+echo $pw | sudo -S umount $HOME/amahi
+
+for mount in $MOUNTS; do
+    echo $pw | sudo -S umount $HOME/$mount
+done
+
