@@ -7,6 +7,7 @@ read -s pw
 echo ""
 
 echo $pw | sudo -S umount $HOME/amahi
+echo $pw | sudo -S umount $HOME/dlna
 
 for mount in $MOUNTS; do
     echo $pw | sudo -S umount $HOME/$mount

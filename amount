@@ -18,6 +18,11 @@ echo $pw | sudo -S mount -t cifs -o \
     credentials=$CREDENTIALS,uid=$USER,gid=$USER //$SERVER/$USER \
     $HOME/amahi
 
+# DLNA
+echo $pw | sudo -S mount -t cifs -o \
+    credentials=$CREDENTIALS,uid=$USER,gid=$USER //$SERVER/dlna \
+    $HOME/dlna
+
 # Subdirs of homedir
 for mount in $MOUNTS; do
     echo $pw | sudo -S mount -t cifs -o \
