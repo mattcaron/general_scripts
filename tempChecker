@@ -1,0 +1,71 @@
+#!/usr/bin/perl
+
+# Monitor temperature output by parsing output from `sensors`.
+
+use strict;
+use warnings;
+use diagnostics;
+
+use Sys::Hostname;
+
+# Default warning temp
+my $warningTemp = 50;
+my $cmd = "sensors";
+
+my $host = hostname();
+
+if (scalar(@ARGV) == 1) {
+    if ($ARGV[0] =~ /^\d+$/) {
+        $warningTemp = $ARGV[0];
+    }
+    else {
+        die("Input temperature must be an integer");
+    }
+}
+elsif (scalar(@ARGV) > 1) {
+    die("Too many arguments");
+}
+# else no args, use defaults
+
+my $ret = open(my $fh, "-|", $cmd);
+
+if (!defined($ret)) {
+    print("Failed to open ${cmd}. Exiting");
+    exit(1);
+}
+else {
+    my $overTemp = 0;
+    my $message = qq^
+WARNING: It looks like something is running a little hot on ${host}.
+Our setpoint was ${warningTemp}°C, and we appear to have exceeded that.
+You might want to have a look the info below:
+
+^;
+    while ((my $line = <$fh>)) {
+        $message .= $line;
+        # temp lines look like:
+        # CPU Temperature:     +49.0°C  (high = +60.0°C, crit = +75.0°C)
+        # So, we want:
+        #    one or more characters
+        #    a colon
+        #    one or more whitespaces
+        #    a literal + or - (though we don't do anything with
+        #    negative temps right now)
+        #    one or more digits (which we capture)
+        #    a decimal
+        #    one more digit
+        #    a °C
+        #    the rest of the line
+        if ($line =~ /^.+:\s+[\+|\-](\d+)\.\d°C.*$/) {
+            my $actualTemp = $1;
+            if ($actualTemp >= $warningTemp) {
+                $overTemp = 1;
+            }
+        }
+    }
+    close($fh);
+        
+    if ($overTemp) {
+        print($message);
+    }
+}
