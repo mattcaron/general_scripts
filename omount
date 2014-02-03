@@ -1,0 +1,18 @@
+#!/bin/bash
+
+URL=https://owncloud.mattcaron.net/remote.php/webdav
+
+echo -n "Enter password: "
+read -s pw
+echo ""
+CREDENTIALS="$HOME/.davfs2/secrets"
+echo "$URL $USER $pw" >> $CREDENTIALS
+chmod 600 $CREDENTIALS
+
+# Homedir
+echo $pw | sudo -S mount -t davfs -o \
+    conf=$HOME/.davfs2/davfs2.conf,username=$USER,uid=$USER,gid=$USER \
+    https://owncloud.mattcaron.net/remote.php/webdav \
+    $HOME/owncloud
+
+rm $CREDENTIALS

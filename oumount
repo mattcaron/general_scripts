@@ -1,0 +1,8 @@
+#!/bin/bash
+
+echo -n "Enter password: "
+read -s pw
+echo ""
+
+echo $pw | sudo -S umount $HOME/owncloud
+
