@@ -1,7 +1,12 @@
 #!/bin/bash
 
+TEST=`host amahi`
 SERVER=mattandliz.dyndns.org
 MOUNTS=`cat ~/.amahi-mounts`
+
+if [ "x$TEST" = "xamahi.home has address 192.168.9.51" ]; then
+    SERVER=amahi
+fi
 
 # Homedir
 sshfs $SERVER: $HOME/amahi
