@@ -1,0 +1,15 @@
+#!/bin/bash
+
+SERVER=mattandliz.dyndns.org
+MOUNTS=`cat ~/.amahi-mounts`
+
+# Homedir
+sshfs $SERVER: $HOME/amahi
+
+# DLNA
+sshfs $SERVER:dlna $HOME/dlna
+
+# Subdirs of homedir
+for mount in $MOUNTS; do
+    sshfs $SERVER:$mount $HOME/$mount
+done

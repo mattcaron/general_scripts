@@ -1,0 +1,11 @@
+#!/bin/bash
+
+MOUNTS=`cat ~/.amahi-mounts`
+
+fusermount -u $HOME/amahi
+fusermount -u $HOME/dlna
+
+for mount in $MOUNTS; do
+    fusermount -u $HOME/$mount
+done
+
