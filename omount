@@ -6,12 +6,16 @@ echo -n "Enter password: "
 read -s pw
 echo ""
 CREDENTIALS="$HOME/.davfs2/secrets"
-echo "$URL $USER $pw" >> $CREDENTIALS
+echo "$URL $USER \"$pw\"" >> $CREDENTIALS
 chmod 600 $CREDENTIALS
 
+# This needs to be root, otherwise mount.davfs complains, since we're
+# running as root.
+echo $pw | sudo -S chown root $CREDENTIALS
+
 echo $pw | sudo -S mount -t davfs -o \
-    conf=$HOME/.davfs2/davfs2.conf,username=$USER,uid=$USER,gid=$USER \
+    conf=$HOME/.davfs2/davfs2.conf,uid=$USER,gid=$USER \
     https://owncloud.mattcaron.net/remote.php/webdav \
     $HOME/owncloud
 
-rm $CREDENTIALS
+echo $pw | sudo -S rm $CREDENTIALS
