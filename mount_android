@@ -1,1 +1,7 @@
-jmtpfs ~/android
+#!/bin/bash
+
+# This outputs semi helpful status messages, which, while nerdy,
+# distract from what I want to do. Unfortunately, they all seem to
+# come out stderr, so I will lose errors too. Fooey.
+
+go-mtpfs ~/android &> /dev/null &
