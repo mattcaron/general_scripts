@@ -1,0 +1,3 @@
+#!/bin/sh
+
+lp -d hl5250dn -o Duplex=DuplexNoTumble "$@"

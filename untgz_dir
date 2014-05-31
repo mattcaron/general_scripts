@@ -1,0 +1,30 @@
+#!/usr/bin/perl -w
+
+use strict;
+use diagnostics;
+
+my @args=@ARGV;
+my $numargs=$#ARGV;
+my $curarg=0;
+my $filename;
+
+print "Extracting...\n";
+
+while ($curarg <= $numargs){
+    $filename=$args[$curarg];
+    print "$filename\n";
+    system "tar zxf $filename";
+    ++$curarg;
+}
+
+
+
+
+
+
+
+
+
+
+
+

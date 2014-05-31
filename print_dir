@@ -1,0 +1,30 @@
+#!/usr/bin/perl -w
+
+use strict;
+use diagnostics;
+
+my @args=@ARGV;
+my $numargs=$#ARGV;
+my $curarg=0;
+my $filename;
+
+print "Printing...\n";
+
+while ($curarg <= $numargs){
+    $filename=$args[$curarg];
+    print "lp -d HL-1440 $filename\n";
+    system "lp -d HL-1440 $filename";
+    ++$curarg;
+}
+
+
+
+
+
+
+
+
+
+
+
+

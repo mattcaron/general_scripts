@@ -1,0 +1,9 @@
+#!/bin/bash
+rm TAGS
+
+for file in `find . -name '*.cpp' -o -name '*.h' -o -name '*.c' -print \
+    | sed "s/^\.\///"`
+do
+    etags --extra=+q --fields=+fksaiS --c++-kinds=+px --append $file
+done
+

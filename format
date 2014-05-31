@@ -1,0 +1,11 @@
+#!/bin/sh
+
+if [ "$1" = "a" ]; then
+    mkdosfs /dev/fd0
+    else if [ "$1" = "b" ]; then
+	mkdosfs /dev/fd1
+    else
+	echo "Usage: format a b"
+    fi
+fi
+

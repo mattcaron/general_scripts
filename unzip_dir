@@ -1,0 +1,30 @@
+#!/usr/bin/perl -w
+
+use strict;
+use diagnostics;
+
+my @args=@ARGV;
+my $numargs=$#ARGV;
+my $curarg=0;
+my $filename;
+
+print "Uncompressing...\n";
+
+while ($curarg <= $numargs){
+    $filename=$args[$curarg];
+    print "$filename\n";
+    system "unzip $filename";
+    ++$curarg;
+}
+
+
+
+
+
+
+
+
+
+
+
+
