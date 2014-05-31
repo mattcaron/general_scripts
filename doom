@@ -1,0 +1,28 @@
+#!/usr/bin/perl
+
+# Run a series of doom-ish games with doomsday
+
+use strict;
+use warnings;
+use diagnostics;
+
+my $home = $ENV{HOME};
+my $prefix = "${home}/dosbox/games";
+
+my $game = "jdoom";
+my $file = "${prefix}/doom/doom.wad";
+my $options = "";
+
+if ($0 =~ /doom2$/) {
+    $file = "${prefix}/doom2/doom2.wad";
+}
+elsif ($0 =~ /hexen$/) {
+    $game = "jhexen";
+    $file = "${prefix}/hexen/hexen.wad";
+}
+elsif ($0 =~ /heretic$/) {
+    $game = "jheretic";
+    $file = "${prefix}/heretic/heretic1.wad";
+}
+
+`doomsday ${options} -game ${game} -file ${file}`;
