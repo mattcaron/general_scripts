@@ -9,20 +9,23 @@ use diagnostics;
 my $home = $ENV{HOME};
 my $prefix = "${home}/dosbox/games";
 
-my $game = "jdoom";
-my $file = "${prefix}/doom/doom.wad";
+my $iwad = "${prefix}/doom/doom.wad";
 my $options = "";
+my $brutal = "";
 
 if ($0 =~ /doom2$/) {
-    $file = "${prefix}/doom2/doom2.wad";
+    $iwad = "${prefix}/doom2/doom2.wad";
 }
 elsif ($0 =~ /hexen$/) {
-    $game = "jhexen";
-    $file = "${prefix}/hexen/hexen.wad";
+    $iwad = "${prefix}/hexen/hexen.wad";
 }
 elsif ($0 =~ /heretic$/) {
-    $game = "jheretic";
-    $file = "${prefix}/heretic/heretic1.wad";
+    $iwad = "${prefix}/heretic/heretic1.wad";
 }
 
-`doomsday ${options} -game ${game} -file ${file}`;
+if ($0 =~ /brutal/) {
+    $brutal = "-file ${prefix}/doom/wads/DoomMetalVol4.wad " . 
+      "-file ${prefix}/doom/wads/brutal19.pk3"
+}
+
+`gzdoom ${options} -iwad ${iwad} ${brutal}`;
