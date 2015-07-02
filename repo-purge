@@ -1,0 +1,156 @@
+#!/bin/bash
+# A script to remove all packages in a repo and revert back to the normal
+# distribution ones.
+#
+# Based on ppa-purge by Robert Hooker (Sarvatt), Tormod Volden
+
+# Defaults
+F_ARCHS=$(dpkg --print-foreign-architectures)
+REPO_PKGS=$(mktemp)
+REVERTS=$(mktemp)
+trap "rm $REPO_PKGS $REVERTS" 0
+
+# Functions to write output nicely.
+write_msg() {
+    echo "$*" | fold -s -w "${COLUMNS:-80}"
+}
+
+msg() {
+	write_msg "$*"
+}
+
+warn() {
+	write_msg "Warning:  $*" 1>&2
+}
+
+usage() {
+	echo "Usage: sudo repo-purge [options] repository URL"
+	echo
+	echo "repo-purge will reset all packages from the repo version"
+        echo "to the standard versions released for your distribution."
+	echo
+	echo "Options:"
+	echo "	-d [distribution]	Override the default distribution choice."
+	echo "	-y 			Pass "-y --force-yes" to apt-get or "-y" to aptitude"
+	echo "	-i			Reverse preference of apt-get upon aptitude."
+	echo "	-h			Display this help text"
+	echo
+	echo "Notice: If repo-purge fails for some reason and you wish to try again,"
+	echo "(For example: you left synaptic open while attempting to run it) simply"
+	echo "uncomment the repo from your sources, run apt-get update and try again."
+	echo
+	exit $1
+}
+
+# Command line options
+while getopts "p:s:d:yih\?" opt; do
+	case "$opt" in
+		d ) DIST="$OPTARG"				;;
+		y ) FORCEINSTALL="true"				;;
+		i ) APTALT="true" 				;;
+		h ) usage 0;					;;
+		\?) usage 1;					;;
+		* ) warn "Unknown option '$opt'"; usage 1;	;;
+	esac
+done
+shift $(($OPTIND -1))
+
+REPONAME=$1
+APTARG=""
+if [ ! -z "$APTALT" ]; then
+	if [ ! -z "$FORCEINSTALL" ]; then
+	APTARG="-y"
+	fi
+	APT=aptitude; APTALT=apt-get
+else
+	if [ ! -z "$FORCEINSTALL" ]; then
+	APTARG="-y --force-yes"
+	fi
+	APT=apt-get; APTALT=aptitude
+fi
+
+# If not set, using defaults
+[ -z "$DIST" ] && DIST=$(lsb_release -c -s)
+
+if [ "$(id -u)" != "0" ]; then
+	warn "This script would need superuser privileges, use sudo"
+	usage 1
+fi
+
+msg "Updating packages lists"
+$APT update > /dev/null || warn "$APT update failed for some reason"
+
+msg "REPO to be removed: $REPONAME"
+
+# Clean up passed in repo name.
+# 1. Remove any http:// type leader
+# 2. Replace / with _
+FRIENDLY_REPONAME=`echo $REPONAME | sed -e 's/^\(http:\|https:\)\/\///' | sed -e 's/\//_/g'`;
+
+# Make list of all packages in REPO
+REPO_LIST=/var/lib/apt/lists/${FRIENDLY_REPONAME}_*_Packages
+msg "REPO_LIST is $REPO_LIST"
+for LIST in $REPO_LIST; do
+	if [ -e $LIST ]; then
+		grep "^Package: " $LIST | cut -d " " -f2 | sort >> $REPO_PKGS
+	fi
+done
+
+if [ ! -s $REPO_PKGS ]; then
+	warn "Could not find package list for REPO: $REPONAME"
+	exit 1
+fi
+
+# Ignore the ppa-purge package
+if grep -q "ppa-purge" $REPO_PKGS; then
+	sed -i '/ppa-purge/d' $REPO_PKGS
+	msg "Note: Not removing ppa-purge package"
+fi
+
+# Get multi-arch package names for revert list
+cat $REPO_PKGS | sort -u |  
+    xargs dpkg-query -W -f='${binary:Package}\t${db:Status-Abbrev}\n' 2>/dev/null |
+    awk '/\tii $/{print $1}' > $REVERTS
+# Fallback for Precise
+if [ ! -s $REVERTS ]; then
+    for PACKAGE in $(cat $REPO_PKGS | sort -u); do
+        dpkg-query -W -f='${PackageSpec}\t${Status}\n' $PACKAGE 2>/dev/null |
+            awk '/\tinstall/{print $1}' >> $REVERTS
+        for F_ARCH in $F_ARCHS; do 
+            dpkg-query -W -f='${PackageSpec}\t${Status}\n' "$PACKAGE:$F_ARCH" 2>/dev/null |
+                awk '/\tinstall/{print $1}' >> $REVERTS
+        done 
+	done
+fi
+
+# Create apt argument list for reverting packages
+REINSTALL=""
+for PACKAGE in $(cat $REVERTS); do
+	REINSTALL="$REINSTALL $PACKAGE/$DIST"
+done
+
+msg "Package revert list generated:"
+msg "$REINSTALL"
+echo
+
+msg "Updating packages lists"
+$APT update > /dev/null || warn "$APT update failed for some reason"
+
+# FIXME:
+# Workaround for now in case APT fails because of a package not in Ubuntu.
+# APTALT actually works but it would be preferred to remove the package
+# from $REINSTALL directly.
+
+if $APT $APTARG install $REINSTALL; then
+	msg "REPO purged successfully"
+elif $APTALT $APTARG install $REINSTALL; then
+	msg "REPO purged successfully using $APTALT fallback"
+else
+	warn "Something went wrong, packages may not have been reverted"
+	exit 1
+fi
+
+msg "NOTE: This script does NOT disable or remove the repository."
+msg "Please do so manually."
+
+exit 0
