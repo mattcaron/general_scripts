@@ -1,8 +1,8 @@
 #!/bin/bash
 
-SERVER=amahi
+SERVER=jarvis
 DOMAIN=HOME
-MOUNTS=`cat ~/.amahi-mounts`
+MOUNTS=`cat ~/.jarvis-mounts`
 
 echo -n "Enter password: "
 read -s pw
@@ -16,12 +16,12 @@ echo "domain=$DOMAIN" >> $CREDENTIALS
 # Homedir
 echo $pw | sudo -S mount -t cifs -o \
     credentials=$CREDENTIALS,uid=$USER,gid=$USER //$SERVER/$USER \
-    $HOME/amahi
+    $HOME/jarvis
 
-# DLNA
+# Shared folder
 echo $pw | sudo -S mount -t cifs -o \
-    credentials=$CREDENTIALS,uid=$USER,gid=$USER //$SERVER/dlna \
-    $HOME/dlna
+    credentials=$CREDENTIALS,uid=$USER,gid=$USER //$SERVER/shared \
+    $HOME/shared
 
 # Subdirs of homedir
 for mount in $MOUNTS; do

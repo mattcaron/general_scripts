@@ -1,13 +1,13 @@
 #!/bin/bash
 
-MOUNTS=`cat ~/.amahi-mounts`
+MOUNTS=`cat ~/.jarvis-mounts`
 
 echo -n "Enter password: "
 read -s pw
 echo ""
 
-echo $pw | sudo -S umount $HOME/amahi
-echo $pw | sudo -S umount $HOME/dlna
+echo $pw | sudo -S umount $HOME/jarvis
+echo $pw | sudo -S umount $HOME/shared
 
 for mount in $MOUNTS; do
     echo $pw | sudo -S umount $HOME/$mount
