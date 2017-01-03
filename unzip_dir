@@ -11,9 +11,9 @@ my $filename;
 print "Uncompressing...\n";
 
 while ($curarg <= $numargs){
-    $filename=$args[$curarg];
+    $filename="$args[$curarg]";
     print "$filename\n";
-    system "unzip $filename";
+    system "unzip \"$filename\"";
     ++$curarg;
 }
 
