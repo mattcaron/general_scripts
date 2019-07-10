@@ -1,9 +1,9 @@
 #!/bin/bash
 
-MOUNTS=`cat ~/.amahi-mounts`
+MOUNTS=`cat ~/.jarvis-mounts`
 
-fusermount -u $HOME/amahi
-fusermount -u $HOME/dlna
+fusermount -u $HOME/jarvis
+fusermount -u $HOME/shared
 
 for mount in $MOUNTS; do
     fusermount -u $HOME/$mount

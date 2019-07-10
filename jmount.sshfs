@@ -1,18 +1,18 @@
 #!/bin/bash
 
-TEST=`host amahi`
+TEST=`host jarvis.home`
 SERVER=mattandliz.dyndns.org
-MOUNTS=`cat ~/.amahi-mounts`
+MOUNTS=`cat ~/.jarvis-mounts`
 
-if [ "x$TEST" = "xamahi.home has address 192.168.9.51" ]; then
-    SERVER=amahi
+if [ "x$TEST" = "xjarvis.home has address 192.168.9.51" ]; then
+    SERVER=jarvis.home
 fi
 
 # Homedir
-sshfs $SERVER: $HOME/amahi
+sshfs $SERVER: $HOME/jarvis
 
-# DLNA
-sshfs $SERVER:dlna $HOME/dlna
+# Shared folder
+sshfs $SERVER:shared $HOME/shared
 
 # Subdirs of homedir
 for mount in $MOUNTS; do
