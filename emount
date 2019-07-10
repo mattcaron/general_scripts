@@ -1,2 +1,2 @@
 #!/bin/sh
-sudo mount -t ecryptfs  ~/secret ~/secret -o ecryptfs_cipher=aes,ecryptfs_key_bytes=32,ecryptfs_passthrough=n,ecryptfs_enable_filename_crypto=y,ecryptfs_fnek_sig=54b8acae53726401
+sudo mount -t ecryptfs  ~/secret ~/secret -o ecryptfs_cipher=aes,ecryptfs_key_bytes=32,ecryptfs_passthrough=n,ecryptfs_enable_filename_crypto=y,ecryptfs_fnek_sig=72754943cee5320e
