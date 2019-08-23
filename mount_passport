@@ -1,0 +1,6 @@
+#!/bin/bash
+
+SERVER=MyPassport
+
+# Homedir
+sshfs root@$SERVER:/media/sdb1 $HOME/$SERVER
