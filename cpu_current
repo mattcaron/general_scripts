@@ -1,15 +1,14 @@
-#!/bin/sh
+#!/bin/bash
 
-echo "Current governors:"
-echo -n "    CPU0: "
-cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
-echo -n "    CPU1: "
-cat /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor
+echo "Current policy:"
+for i in {0..7}; do
+echo -n "    CPU${i}: "
+cpufreq-info -p -c $i
+done
 echo " "
 echo "Current speeds:"
-echo -n "    CPU0: "
-cat /sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_cur_freq 
-echo -n "    CPU1: "
-cat /sys/devices/system/cpu/cpu1/cpufreq/cpuinfo_cur_freq 
+for i in {0..7}; do
+echo -n "    CPU${i}: "
+cpufreq-info -f -c $i
+done
 echo " "
-
