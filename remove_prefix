@@ -1,0 +1,24 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+use diagnostics;
+
+# First arg is prefix to remove
+
+my $prefix = shift(@ARGV);
+  
+my @args=@ARGV;
+my $numargs=$#ARGV;
+my $curarg=0;
+my $oldname;
+my $newname;
+
+while ($curarg <= $numargs){
+    $oldname = "$args[$curarg]";
+    $newname = $oldname;
+    $newname =~ s/^$prefix//;
+    print "$oldname => $newname\n";
+    system "mv \"$oldname\" \"$newname\"";
+    ++$curarg;
+}
