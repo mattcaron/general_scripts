@@ -2,7 +2,6 @@
 
 SERVER=jarvis
 DOMAIN=HOME
-MOUNTS=`cat ~/.jarvis-mounts`
 
 echo -n "Enter password: "
 read -s pw
@@ -17,17 +16,5 @@ echo "domain=$DOMAIN" >> $CREDENTIALS
 echo $pw | sudo -S mount -t cifs -o \
     credentials=$CREDENTIALS,uid=$USER,gid=$USER //$SERVER/$USER \
     $HOME/jarvis
-
-# Shared folder
-echo $pw | sudo -S mount -t cifs -o \
-    credentials=$CREDENTIALS,uid=$USER,gid=$USER //$SERVER/shared \
-    $HOME/shared
-
-# Subdirs of homedir
-for mount in $MOUNTS; do
-    echo $pw | sudo -S mount -t cifs -o \
-        credentials=$CREDENTIALS,uid=$USER,gid=$USER //$SERVER/$USER/$mount \
-        $HOME/$mount
-done
 
 rm $CREDENTIALS
