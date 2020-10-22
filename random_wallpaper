@@ -3,7 +3,7 @@ use strict;
 use warnings;
 
 # Set to the directory you want to have searched for photos
-my $searchPath = '/home/matt/workspace/pics/wallpaper';
+my $searchPath = '/home/matt/workspace/pics/xfce_wallpaper /home/matt/workspace/pics/photos/family/kids/general';
 # Edit to the number of seconds between photo switches
 my $switchTime = 600;
 
@@ -26,12 +26,13 @@ if ($running eq "1") {
     while(1)
     {
         $photo = $photos[rand($#photos)];
+        print "Photo is ${photo}\n";
         # Mate
-        #`mateconftool-2 --type string --set /desktop/mate/background/picture_filename "$photo"`;
+        # `mateconftool-2 --type string --set /desktop/mate/background/picture_filename "$photo"`;
 
         # Gnome
         # `gconftool-2 --type string --set /desktop/gnome/background/picture_filename "$photo"`;
-        
+
         # general
         # `xli -onroot -fullscreen "$photo"`;
         
@@ -39,11 +40,14 @@ if ($running eq "1") {
         #`echo "# xfce backdrop list\n$photo" > ~/.config/xfce4/desktop/backdrop.list && xfdesktop --reload`;
     
         # newer Xfce
-        `echo "# xfce backdrop list\n$photo" > ~/.config/xfce4/desktop/backdrop.list && xfdesktop --reload`;
+        # `echo "# xfce backdrop list\n$photo" > ~/.config/xfce4/desktop/backdrop.list && xfdesktop --reload`;
         
         # lxde
         # `pcmanfm -w ${photo}`;
-        
+
+        # New Mate (Ubuntu Mate 20.04)
+        `dconf write /org/mate/desktop/background/picture-filename "'$photo'"`;
+
         sleep($switchTime);
     }
 }
