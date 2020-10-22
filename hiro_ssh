@@ -1,0 +1,18 @@
+#!/bin/sh
+
+SERVER=hiro
+MOUNT=bluebox_share
+
+# Mount the shared dir
+sshfs $SERVER:$MOUNT $HOME/$MOUNT
+
+# To connect to the existing X11 session
+ssh -t -L 5900:127.0.0.1:5900 $SERVER 'x11vnc -localhost -usepw -display :0 -xkb -noxrecord'
+
+# To connect to the login screen if the machine rebooted.
+# ssh -t -L 5900:127.0.0.1:5900 work 'sudo x11vnc -localhost -usepw -display :0 -xkb -auth /var/run/lightdm/root/:0'
+
+# The above persists until closed. Once closed, we get here, so we can cleanup by unmounting.
+fusermount -u $HOME/$MOUNT
+
+
