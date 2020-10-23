@@ -1,0 +1,3 @@
+#!/bin/bash
+
+wget -np -mr -R "index.html*" $1
