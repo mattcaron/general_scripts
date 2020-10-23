@@ -1,0 +1,45 @@
+#!/bin/bash
+
+# Split on newline, not spaces
+SAVEIFS=$IFS
+IFS=$(echo -en "\n\b")
+
+# Check 7z files
+for file in `find . -name \*.7z -type f`
+do
+    echo -n "Checking ${file}... "
+    if 7z t "${file}" > /dev/null
+    then
+        echo "OK"
+    else
+        echo "FAILED"
+    fi
+done
+
+# Check zip files
+for file in `find . -name \*.zip -type f`
+do
+    echo -n "Checking ${file}... "
+    if unzip -t "${file}" > /dev/null
+    then
+        echo "OK"
+    else
+        echo "FAILED"
+    fi
+done
+
+# Check bz2 files
+for file in `find . -name \*.bz2 -type f`
+do
+    echo -n "Checking ${file}... "
+    if bzip2 -t "${file}" > /dev/null
+    then
+        echo "OK"
+    else
+        echo "FAILED"
+    fi
+done
+
+
+# Restore it
+IFS=$SAVEIFS
