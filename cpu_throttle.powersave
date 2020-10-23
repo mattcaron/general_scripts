@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# Throttle the CPU to not turbo anymore. This is a stupid idea and
+# thermally throttles too much on computationally intensive
+# tasks. Plus, it ends up making the machine unstable over long
+# periods of time due to excess heat.
+
+# This was tuned so I no longer saw thermal throttling messages in the
+# logs.
+MAX=3200000
+MIN=800000
+GOVERNOR=powersave
+
+echo "Throttling to $MAX"
+for i in {0..7}; do
+    cpufreq-set --min $MIN --max $MAX --governor $GOVERNOR -c $i
+done
