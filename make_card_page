@@ -1,0 +1,10 @@
+#!/bin/bash
+
+if [ $# -gt 1 ]; then
+    output="${!#}"
+    inputs=("${@:1:$#-1}")
+    montage "${inputs[@]}" -geometry +10+10 -tile 2x4 "${output}"
+else
+    echo ""
+    echo "Usage: $0 <input files> <output file>"
+fi
