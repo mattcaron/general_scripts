@@ -1,0 +1,149 @@
+#!/bin/perl
+
+use strict;
+use warnings;
+use diagnostics;
+
+##
+# Script to parse an Intel Hex file and convert it to an array of C
+# structs defined thusly:
+#
+# typedef struct {
+#   byte length;      // length of data, in bytes
+#   byte addressMSB;  // most siginficant byte of address
+#   byte addressLSB;  // least significant byte of address
+#   byte type;        // data type
+#   byte data[255];   // data buffer
+#   byte checksum;    // checksum
+# } hex_line_t;
+#
+# NOTE: Size data[] according to your application. For example, for
+# the ATMega328 (and possibly others), Arduino only uses 16 byte lines.
+#
+# For a more minimalist (albeit possibly dangerous) output, you can
+# omit the (not frequently used) type field and the (probably should
+# be used but isn't strictly necessary) checksum field my changing
+# the constants below.
+
+# Don't include type field
+use constant OMIT_TYPE => 1;
+
+# Don't include checksum field
+use constant OMIT_CHECKSUM => 0;
+
+##
+# Parse a hex line and return the string to be written to the file.
+#
+# @param lineno line number
+# @param line line to be parsed
+#
+# @return a string to be printed to the output file.
+sub parse_line($$)
+{
+    my ($lineno, $line) = @_;
+    my $output;
+
+    my @chars = split('', $line);
+
+    if ($chars[0] ne ":") {
+        print("Error: Line ${lineno} does not start with :\n");
+    }
+    else {
+        $output = "    {\n";
+
+        # We need the length as a number to correctly parse the data.
+        my $length = hex("0x${chars[1]}${chars[2]}");
+
+        $output .= "        .length = 0x${chars[1]}${chars[2]},\n";
+        $output .= "        .addressMSB = 0x${chars[3]}${chars[4]},\n";
+        $output .= "        .addressLSB = 0x${chars[5]}${chars[6]},\n";
+
+        if (!OMIT_TYPE) {
+            $output .= "        .type = 0x${chars[7]}${chars[8]},\n";
+        }
+        
+        # We skip the next 2 characters (type)
+
+        if ($length > 0) {
+            $output .= "        .data = {";
+
+            for (my $data_index = 0; $data_index < $length; ++$data_index) {
+                $output .= "0x${chars[$data_index*2+9]}${chars[$data_index*2+10]},";
+            }
+            # Remove the last comma (last character) from the data initializer
+            $output = substr($output, 0, -1);
+            if (OMIT_CHECKSUM) {
+                $output .= "}\n";
+            }
+            else {
+                $output .= "},\n";
+            }
+        }
+        else {
+            # empty data
+            if (OMIT_CHECKSUM) {
+                $output .= "        .data = {}\n";
+            }
+            else {
+                $output .= "        .data = {}\n";
+            }
+        }
+        if (!OMIT_CHECKSUM) {
+            $output .= "        .checksum = 0x${chars[$length*2+9]}${chars[$length*2+10]}\n";
+        }
+        $output .= "    },\n";
+    }
+
+    return $output;
+}
+
+##
+# Print usage
+#
+sub print_usage()
+{
+    print("Usage:\n");
+    print("    ${0} <input> <output>\n");
+}
+
+##
+# C programmer writing perl compatibility shim
+sub main($@)
+{
+    my ($argc, @argv) = @_;
+
+    if ($argc != 2) {
+        print("Error - incorrect number of arguments.\n");
+        print_usage();
+    }
+    else {
+        my $infile = shift(@ARGV);
+        my $outfile = shift(@ARGV);
+
+        if (!defined(open(INFH, "<", $infile))) {
+            printf("Error opening file ${infile}: $!\n");
+        }
+        else {
+            if (!defined(open(OUTFH, ">", $outfile))) {
+                printf("Error opening file ${outfile}: $!\n");
+                close(INFH);
+            }
+            else {
+                print(OUTFH "hex_line_t firmwareArray[] = {\n");
+
+                my $lineno = 0;
+                while(my $line = <INFH>) {
+                    ++$lineno;
+                    print(OUTFH parse_line($lineno, $line));
+                }
+
+                print(OUTFH "};\n");
+
+                close(OUTFH);
+                close(INFH);
+            }
+        }
+    }
+}
+
+main(scalar(@ARGV), @ARGV);
