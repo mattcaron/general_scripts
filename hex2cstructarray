@@ -29,7 +29,7 @@ use diagnostics;
 use constant OMIT_TYPE => 1;
 
 # Don't include checksum field
-use constant OMIT_CHECKSUM => 0;
+use constant OMIT_CHECKSUM => 1;
 
 ##
 # Parse a hex line and return the string to be written to the file.
@@ -85,7 +85,7 @@ sub parse_line($$)
                 $output .= "        .data = {}\n";
             }
             else {
-                $output .= "        .data = {}\n";
+                $output .= "        .data = {},\n";
             }
         }
         if (!OMIT_CHECKSUM) {
@@ -137,7 +137,11 @@ sub main($@)
                     print(OUTFH parse_line($lineno, $line));
                 }
 
-                print(OUTFH "};\n");
+                print(OUTFH "};\n\n");
+
+                # lineno is 1 based, indices are 0 based..
+                --$lineno;
+                print(OUTFH "size_t firmwareArrayLength = ${lineno};\n");
 
                 close(OUTFH);
                 close(INFH);
