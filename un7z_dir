@@ -1,0 +1,33 @@
+#!/usr/bin/perl -w
+
+use strict;
+use diagnostics;
+use File::Basename;
+
+my @args=@ARGV;
+my $numargs=$#ARGV;
+my $curarg=0;
+my $filename;
+my $dirname;
+
+print "Uncompressing...\n";
+
+while ($curarg <= $numargs){
+    $filename="$args[$curarg]";
+    $dirname = basename($filename, ".7z");
+    print("unzipping $filename\n");
+    system "7z x \"$filename\"";
+    ++$curarg;
+}
+
+
+
+
+
+
+
+
+
+
+
+
