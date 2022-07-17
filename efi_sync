@@ -1,0 +1,22 @@
+#!/bin/bash
+
+EFI_DIR="/boot/efi"
+HIRO_DRIVE="/dev/nvme1n1p4"
+BLUEBOX_DRIVE="/dev/nvme1n1p4"
+
+if [ "`hostname`" = "hiro" ]; then
+    DRIVE=$HIRO_DRIVE
+elif [ "`hostname`" = "bluebox" ]; then
+    DRIVE=$BLUEBOX_DRIVE
+else
+    echo "Unknown host, exiting"
+    exit 1
+fi
+
+TMP_DIR=`mktemp -d /tmp/efi_mount.XXXX`
+
+mount ${DRIVE} ${TMP_DIR} && \
+    rsync -a --delete ${EFI_DIR}/ ${TMP_DIR} && \
+    umount ${TMP_DIR} && \
+    rmdir ${TMP_DIR}
+
