@@ -1,5 +1,5 @@
 #!/bin/bash                                                                     
 
-xrandr --output HDMI-A-0 --mode "1920x1080" --refresh 60 --set TearFree &> /dev/null
+xrandr --output HDMI-A-0 --mode "1920x1080" --refresh 60 --set TearFree on &> /dev/null
 eval $@
 xrandr --output HDMI-A-0 --mode "3840x2160" --refresh 30 --set TearFree on &> /dev/null
