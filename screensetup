@@ -1,10 +1,18 @@
-#!/bin/bash                                                                     
+#!/bin/bash
 
-xrandr --output HDMI-A-0 --mode "3840x2160" --refresh 30 --set TearFree on
+HOST=`hostname`
+
+if [ $HOST == "hiro" ]; then
+    xrandr --output DP-1-4 --mode "3840x2160" --refresh 30 --set TearFree on
+elif [ $HOST == "bluebox" ]; then
+    xrandr --output HDMI-A-0 --mode "3840x2160" --refresh 30 --set TearFree on
+else
+    echo "Unknown host ${HOST}, not doing anything special."
+fi
+
 xrandr --auto
 xrandr --query
 echo
 echo press enter to continue
 echo
 read
-
