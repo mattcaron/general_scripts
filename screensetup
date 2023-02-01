@@ -5,7 +5,8 @@ HOST=`hostname`
 if [ $HOST == "hiro" ]; then
     xrandr --output DP-1-4 --mode "3840x2160" --refresh 30 --set TearFree on
 elif [ $HOST == "bluebox" ]; then
-    xrandr --output HDMI-A-0 --mode "3840x2160" --refresh 30 --set TearFree on
+    # the transform shifts it down by 2 pixels because, at 60Hz, it's shifted up two lines off the top of my screen.
+    xrandr --output HDMI-A-0 --mode "3840x2160" --refresh 60 --set TearFree on --transform 1,0,0,0,1,-2,0,0,1
 else
     echo "Unknown host ${HOST}, not doing anything special."
 fi
