@@ -11,7 +11,7 @@ my $filename;
 print "Extracting...\n";
 
 while ($curarg <= $numargs){
-    $filename=$args[$curarg];
+    $filename="$args[$curarg]";
     print "$filename\n";
     system "tar zxf $filename";
     ++$curarg;
