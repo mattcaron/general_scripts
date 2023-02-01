@@ -1,0 +1,39 @@
+#!/usr/bin/perl -w
+
+use strict;
+use diagnostics;
+use File::Basename;
+
+my @args=@ARGV;
+my $numargs=$#ARGV;
+my $curarg=0;
+my $filename;
+my $dirname;
+
+print "Extracting...\n";
+
+while ($curarg <= $numargs){
+    $filename="$args[$curarg]";
+    if ($filename =~ /\.tgz/) {
+        $dirname = basename($filename, ".tgz");
+    }
+    if ($filename =~ /\.tar\.gz/) {
+        $dirname = basename($filename, ".tar.gz");
+    }
+    print("extracting $filename into $dirname\n");
+    mkdir("$dirname");
+    system "cd \"$dirname\" && tar zxf \"../$filename\"";
+    ++$curarg;
+}
+
+
+
+
+
+
+
+
+
+
+
+
