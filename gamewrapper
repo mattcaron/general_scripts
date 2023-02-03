@@ -1,0 +1,10 @@
+#!/bin/bash
+
+export PROTON_LOG=0
+export MANGOHUD=1
+export WINE_FULLSCREEN_FSR=1
+export WINE_FULLSCREEN_FSR_STRENGTH=0
+
+xfconf-query -c xfce4-notifyd -p /do-not-disturb -s true
+eval "gamemoderun $@"
+xfconf-query -c xfce4-notifyd -p /do-not-disturb -s false
