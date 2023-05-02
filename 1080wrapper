@@ -1,12 +1,5 @@
 #!/bin/bash
 
-export PROTON_LOG=0
-export MANGOHUD=0
-export WINE_FULLSCREEN_FSR=1
-export WINE_FULLSCREEN_FSR_STRENGTH=0
-
-xfconf-query -c xfce4-notifyd -p /do-not-disturb -s true
-xrandr --output HDMI-A-0 --mode "1920x1080" --refresh 120 --set TearFree on &> /dev/null
-eval "gamemoderun $@"
-xrandr --output HDMI-A-0 --mode "3840x2160" --refresh 60 --set TearFree on --transform 1,0,0,0,1,-2,0,0,1 &> /dev/null
-xfconf-query -c xfce4-notifyd -p /do-not-disturb -s false
+1080screen
+gamewrapper $@
+screensetup --quiet &> /dev/null
