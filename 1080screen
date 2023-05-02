@@ -1,5 +1,4 @@
 #!/bin/bash                                                                     
 
 xrandr --output HDMI-A-0 --mode "1920x1080" --refresh 120 --set TearFree on
-xrandr --query
 
