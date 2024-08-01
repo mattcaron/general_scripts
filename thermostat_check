@@ -1,0 +1,10 @@
+#!/bin/sh
+WGET=`which wget`
+URL="https://thermostat"
+
+${WGET} -O /dev/null --tries=1 ${URL} --no-check-certificate --quiet > /dev/null
+
+
+if [ $? -ne 0 ]; then
+    echo "Failed to contact ${URL}. Host is likely down."
+fi
