@@ -1,0 +1,40 @@
+#!/bin/bash
+
+## Constants
+OVERSTEER_PROFILE="Internet settings"
+PEDAL_MATCH_STRING="Vendor=044f Product=b371"
+
+## Code
+TEMP=`cat /proc/bus/input/devices | awk -v search="$PEDAL_MATCH_STRING" '$0~search{for(a=0;a>=0;a++){getline;{if(/js/==1){ print $NF;exit 0;}}}}'`
+
+PEDAL_DEVICE="/dev/input/${TEMP}"
+
+echo "Found pedals at ${PEDAL_DEVICE}"
+
+# Force detect the various devices. Wheel is automatic.
+# The UDEV rule should render this env variable obsolete, but AC
+# doesn't work without it - likely because it's using SDL1, and
+# the udev fixes SDL2.
+export SDL_JOYSTICK_DEVICE=${PEDAL_DEVICE}
+
+# Custom mapping for shifter. Created with SDL2 Gamepad Tool (https://generalarcade.com/gamepadtool/)
+export SDL_GAMECONTROLLERCONFIG="03000000790000000600000010010000,DragonRise Inc. Generic USB Joystick,a:b5,b:b4,x:b3,y:b2,leftstick:b7,leftshoulder:b1,rightshoulder:b0,platform:Linux,"
+
+# load steering wheel settings
+echo "Loading oversteer profile: ${OVERSTEER_PROFILE}"
+oversteer -p "${OVERSTEER_PROFILE}"
+
+# Figure out content manager command
+ORIGINAL_COMMAND="$@"
+CONTENT_MANAGER_COMMAND="${ORIGINAL_COMMAND::-17}Content Manager Safe.exe'"
+
+# UNCOMMENT ONE AND ONLY ONE OF THE FOLLOWING COMMANDS:
+
+# Run default game
+# gamewrapper $@
+
+# Run content manager
+gamewrapper ${CONTENT_MANAGER_COMMAND}
+
+# For testing control things
+# protontricks -c "wine control" 244210
