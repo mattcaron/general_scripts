@@ -8,6 +8,8 @@ export DXVK_ASYNC=1
 # export RADV_PERFTEST=rt
 
 donotdisturb
+presentationmode_on
 eval "gamemoderun $@"
+presentationmode_off
 disturbed
 
