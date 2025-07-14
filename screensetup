@@ -5,8 +5,8 @@ HOST=`hostname`
 if [ $HOST == "hiro" ]; then
     xrandr --output DP-1-4 --mode "3840x2160" --refresh 30 --set TearFree on
 elif [ $HOST == "bluebox" ]; then
-    # the transform shifts it down by 2 pixels because it's shifted up two lines off the top of my screen.
-    xrandr --output HDMI-A-0 --mode "3840x2160" --refresh 60 --set TearFree on --transform 1,0,0,0,1,-2,0,0,1
+    # 60fps looks better for plain text; no need for VRR in this case.
+    nvidia-settings --assign CurrentMetaMode="HDMI-0: 3840x2160_60 +0+0 {AllowGSYNCCompatible=Off}"
 else
     echo "Unknown host ${HOST}, not doing anything special."
 fi

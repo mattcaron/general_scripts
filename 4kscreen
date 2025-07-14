@@ -1,3 +1,4 @@
 #!/bin/bash                                                                     
 
-xrandr --output HDMI-A-0 --mode "3840x2160" --refresh 120 --set TearFree on
+# xrandr --output HDMI-0 --mode "3840x2160" --refresh 120
+nvidia-settings --assign CurrentMetaMode="HDMI-0: 3840x2160_120 +0+0 {AllowGSYNCCompatible=On}"
