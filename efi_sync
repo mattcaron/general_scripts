@@ -1,15 +1,37 @@
 #!/bin/bash
 
-# This assumes 2 NVMe drives as boot drives. The first drive is
-# nvme0n1 and the second drive is nvme1n1. All have 4 partitions, with
-# the EFI partition being partition 4. The idea is that, if we sync
-# the EFI information to the second drive, it has all the information
-# it needs to boot as a degraded array. Switch out the first drive,
-# mirror the partition scheme, add the device to the RAID array, let
-# it rebuild, and everything will be fine.
+# The overall idea is that, if we sync the EFI information to the
+# second drive, it has all the information it needs to boot as a
+# degraded array. Switch out the first drive, mirror the partition
+# scheme, add the device to the RAID array, let it rebuild, and
+# everything will be fine.
 
+HOSTNAME=`hostname`
+
+if [ $HOSTNAME == "bluebox" ] ||
+   [ $HOSTNAME == "hiro" ]; then
+
+    # These machines are a little odd, but both in the same way. The
+    # installs were originally on BIOS machines which were converted
+    # over to EFI machines - either by drive transplant or in situ
+    # upgrade. Either way, they ended up in the same way, that is,
+    # with the EFI System Partition (ESP) as the last partition on the
+    # disks, rather than the first.
+    DRIVE="/dev/nvme1n1p4"
+
+elif [ $HOSTNAME == "cameras" ]; then
+
+    # This machine is more conventional. It was built as an EFI
+    # machine, so the ESP is first on the drives.
+    DRIVE="/dev/sdb1"
+
+else
+    echo "Unknown machine. Not doing anything to protect against damage."
+    exit -1
+fi
+
+# This mountpoint is the same for all machines.
 EFI_DIR="/boot/efi"
-DRIVE="/dev/nvme1n1p4"
 
 TMP_DIR=`mktemp -d /tmp/efi_mount.XXXX`
 
@@ -17,4 +39,3 @@ mount ${DRIVE} ${TMP_DIR} && \
     rsync -a --delete ${EFI_DIR}/ ${TMP_DIR} && \
     umount ${TMP_DIR} && \
     rmdir ${TMP_DIR}
-
