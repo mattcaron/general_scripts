@@ -8,17 +8,22 @@
 
 HOSTNAME=`hostname`
 
-if [ $HOSTNAME == "bluebox" ] ||
-   [ $HOSTNAME == "hiro" ]; then
+if [ $HOSTNAME == "bluebox" ]; then
 
-    # These machines are a little odd, but both in the same way. The
-    # installs were originally on BIOS machines which were converted
-    # over to EFI machines - either by drive transplant or in situ
-    # upgrade. Either way, they ended up in the same way, that is,
+    # This machine is a little odd. The install was originally on BIOS
+    # machines which was converted over to an EFI machine, so it ended
     # with the EFI System Partition (ESP) as the last partition on the
     # disks, rather than the first.
     DRIVE="/dev/nvme1n1p4"
 
+elif [ $HOSTNAME == "hiro" ]; then
+
+    # This machine is similar to bluebox, except that it has 3 NVMe
+    # drives (2 the same and 1 different) AND the system firmware
+    # likes to reorder them every boot. Thus, we can't reliably mount
+    # them by device name, and we need to use UUID instead.
+    DRIVE="UUID=\"42CE-83D3\""
+    
 elif [ $HOSTNAME == "cameras" ]; then
 
     # This machine is more conventional. It was built as an EFI
