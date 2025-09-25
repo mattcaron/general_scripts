@@ -1,0 +1,1 @@
+sshfs root@x1carbon:/mnt/sdcard $HOME/x1carbon
