@@ -1,0 +1,5 @@
+#!/bin/bash
+
+1080-60screen
+gamewrapper $@
+screensetup --quiet &> /dev/null
