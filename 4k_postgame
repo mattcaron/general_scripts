@@ -1,0 +1,4 @@
+sleep 2
+presentationmode_off
+disturbed
+screensetup --quiet &> /dev/null
