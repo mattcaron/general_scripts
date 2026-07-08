@@ -1,4 +1,4 @@
 #!/bin/bash                                                                     
 
 # xrandr --output HDMI-0 --mode "3840x2160" --refresh 120
-nvidia-settings --assign CurrentMetaMode="HDMI-0: 3840x2160_120 +0+0 {AllowGSYNCCompatible=On}"
+nvidia-settings --assign CurrentMetaMode="HDMI-0: 3840x2160_120 +0+0 {AllowGSYNCCompatible=On}, HDMI-1: 1920x1080_60 +0+2160"

@@ -7,7 +7,7 @@ if [ $HOST == "hiro" ]; then
     xrandr --output HDMI-1-0 --mode "3840x2160" --refresh 30
 elif [ $HOST == "bluebox" ]; then
     # 60fps looks better for plain text; no need for VRR in this case.
-    nvidia-settings --assign CurrentMetaMode="HDMI-0: 3840x2160_60 +0+0 {AllowGSYNCCompatible=Off}"
+    nvidia-settings --assign CurrentMetaMode="HDMI-0: 3840x2160_60 +0+0 {AllowGSYNCCompatible=Off}, HDMI-1: 1920x1080_60 +0+2160"
 else
     echo "Unknown host ${HOST}, not doing anything special."
 fi
